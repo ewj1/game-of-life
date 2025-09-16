@@ -19,7 +19,7 @@ export function GameOfLife() {
   const [isRunning, setIsRunning] = useState(false);
   const [gridSize, setGridSize] = useState(100);
   const [showGrid, setShowGrid] = useState(false);
-  const [speed, setSpeed] = useState(50);
+  const [speed, setSpeed] = useState(147.5);
   const [wrapWalls, setWrapWalls] = useState(false);
   const [board, setBoard] = useImmer(() => createBoard(gridSize));
   const initBoardRef = useRef(board);
@@ -31,6 +31,7 @@ export function GameOfLife() {
   }, [speed]);
 
   useEffect(() => {
+    console.log(speed);
     updateBoardRef.current = () =>
       setBoard((draft) => {
         for (let i = 0; i < gridSize; i++) {
@@ -95,6 +96,7 @@ export function GameOfLife() {
   function handleSpeedChange(value) {
     const pct = Number(value) / 100; // 0 → 1
     const delay = MIN_DELAY + (MAX_DELAY - MIN_DELAY) * (1 - pct);
+    console.log("delay", delay);
     setSpeed(delay);
   }
 

@@ -17,8 +17,11 @@ export function Controls({
             id="speed"
             min="1"
             max="100"
-            onChange={(e) => handleSpeedChange(e.target.value)}
-            value="50"
+            onChange={(e) => {
+              console.log("speed", e.target.value);
+              handleSpeedChange(e.target.value);
+            }}
+            defaultValue="75"
           />
           <label htmlFor="speed">Speed</label>
         </div>
