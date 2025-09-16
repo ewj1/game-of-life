@@ -1,46 +1,45 @@
 import { useRef, useEffect } from "react";
 
 export function Board({ board, showGrid }) {
-  const numCols = board[0].length;
-  const numRows = board.length;
-  const resolution = 3;
-  const strokeWidth = 1;
+  const gridSize = board.length;
+  const strokeWidth = 0.5;
   const canvasRef = useRef(null);
 
   useEffect(() => {
+    const resolution = 450 / gridSize;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
     //CANVAS SIZING
     const dpr = window.devicePixelRatio || 1;
-    const displayWidth = numCols * resolution + 2 * strokeWidth;
-    const displayHeight = numRows * resolution + 2 * strokeWidth;
+    const displayWidth = 450 + 2 * strokeWidth;
+    const displayHeight = 450 + 2 * strokeWidth;
     canvas.width = displayWidth * dpr;
     canvas.height = displayHeight * dpr;
     canvas.style.width = displayWidth + "px";
     canvas.style.height = displayHeight + "px";
     ctx.scale(dpr, dpr);
-    ctx.imageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = true;
 
     function draw() {
       //erase
       ctx.clearRect(0, 0, displayWidth, displayHeight);
 
       //draw cells
-      for (let i = 0; i < numRows; i++) {
-        for (let j = 0; j < numCols; j++) {
+      for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {
           ctx.fillStyle = board[i][j] ? "black" : "white";
 
           ctx.fillRect(
-            Math.floor(strokeWidth + resolution * i),
-            Math.floor(strokeWidth + resolution * j),
-            resolution,
-            resolution
+            resolution * i,
+            resolution * j,
+            resolution + strokeWidth,
+            resolution + strokeWidth
           );
           if (!showGrid) continue;
           ctx.strokeRect(
-            Math.floor(strokeWidth + resolution * i),
-            Math.floor(strokeWidth + resolution * j),
+            resolution * i,
+            resolution * j,
             resolution,
             resolution
           );
@@ -48,7 +47,7 @@ export function Board({ board, showGrid }) {
       }
     }
     draw();
-  }, [numCols, numRows, board, showGrid]);
+  }, [gridSize, board, showGrid]);
 
   return (
     <>

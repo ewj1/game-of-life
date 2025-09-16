@@ -16,14 +16,12 @@ const neighborPositions = [
 ];
 
 export function GameOfLife() {
-  const [isRunning, setIsRunning] = useState(true);
+  const [isRunning, setIsRunning] = useState(false);
+  const [gridSize, setGridSize] = useState(100);
   const [showGrid, setShowGrid] = useState(false);
-  const [speed, setSpeed] = useState(10);
+  const [speed, setSpeed] = useState(50);
   const [wrapWalls, setWrapWalls] = useState(false);
-
-  const numRows = 150;
-  const numCols = 150;
-  const [board, setBoard] = useImmer(() => createBoard(numRows, numCols));
+  const [board, setBoard] = useImmer(() => createBoard(gridSize));
   const initBoardRef = useRef(board);
   const speedRef = useRef(null);
   const updateBoardRef = useRef(null);
@@ -35,16 +33,16 @@ export function GameOfLife() {
   useEffect(() => {
     updateBoardRef.current = () =>
       setBoard((draft) => {
-        for (let i = 0; i < numRows; i++) {
-          for (let j = 0; j < numCols; j++) {
+        for (let i = 0; i < gridSize; i++) {
+          for (let j = 0; j < gridSize; j++) {
             const numNeighbors = neighborPositions.reduce((count, [dx, dy]) => {
               let ni = i + dx;
               let nj = j + dy;
               if (wrapWalls) {
-                ni = wrap(ni, numCols);
-                nj = wrap(nj, numRows);
+                ni = wrap(ni, gridSize);
+                nj = wrap(nj, gridSize);
               }
-              if (ni >= 0 && ni < numCols && nj >= 0 && nj < numRows) {
+              if (ni >= 0 && ni < gridSize && nj >= 0 && nj < gridSize) {
                 count += board[ni][nj];
               }
               return count;
@@ -64,7 +62,7 @@ export function GameOfLife() {
         }
         return draft;
       });
-  }, [setBoard, board, wrapWalls]);
+  }, [setBoard, board, wrapWalls, gridSize]);
 
   useEffect(() => {
     if (!isRunning) return;
@@ -78,9 +76,9 @@ export function GameOfLife() {
     return () => clearTimeout(timeoutId);
   }, [isRunning]);
 
-  function createBoard(numRows, numCols) {
-    return Array.from({ length: numRows }, () =>
-      Array.from({ length: numCols }, () => Math.round(Math.random()))
+  function createBoard(gridSize) {
+    return Array.from({ length: gridSize }, () =>
+      Array.from({ length: gridSize }, () => Math.round(Math.random()))
     );
   }
 
@@ -92,6 +90,22 @@ export function GameOfLife() {
     setWrapWalls(!wrapWalls);
   }
 
+  const MIN_DELAY = 30;
+  const MAX_DELAY = 500;
+  function handleSpeedChange(value) {
+    const pct = Number(value) / 100; // 0 → 1
+    const delay = MIN_DELAY + (MAX_DELAY - MIN_DELAY) * (1 - pct);
+    setSpeed(delay);
+  }
+
+  const handleGridSizeChange = (size) => {
+    setIsRunning(false);
+    setGridSize(size);
+    const newBoard = createBoard(size);
+    setBoard(newBoard); // immediately create a new board
+    initBoardRef.current = newBoard; // update initial snapshot if needed
+  };
+
   return (
     <>
       <div className="flex justify-center">
@@ -101,7 +115,8 @@ export function GameOfLife() {
           setIsRunning={setIsRunning}
           showGrid={showGrid}
           setShowGrid={setShowGrid}
-          setSpeed={setSpeed}
+          handleSpeedChange={handleSpeedChange}
+          handleGridSizeChange={handleGridSizeChange}
           resetBoard={() => setBoard(initBoardRef.current)}
           handleWrapChange={handleWrapChange}
         />

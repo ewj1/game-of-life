@@ -3,50 +3,63 @@ export function Controls({
   setIsRunning,
   showGrid,
   setShowGrid,
-  setSpeed,
+  handleSpeedChange,
+  handleGridSizeChange,
   resetBoard,
   handleWrapChange,
 }) {
-  const MIN_DELAY = 30;
-  const MAX_DELAY = 500;
-  function handleSpeedChange(value) {
-    const pct = Number(value) / 100; // 0 → 1
-    const delay = MIN_DELAY + (MAX_DELAY - MIN_DELAY) * (1 - pct);
-    setSpeed(delay);
-  }
   return (
     <>
-      <input
-        type="range"
-        id="speed"
-        min="1"
-        max="100"
-        onChange={(e) => handleSpeedChange(e.target.value)}
-      />
-      <label htmlFor="speed">Speed</label>
+      <div className="flex flex-col align-center">
+        <div>
+          <input
+            type="range"
+            id="speed"
+            min="1"
+            max="100"
+            onChange={(e) => handleSpeedChange(e.target.value)}
+            value="50"
+          />
+          <label htmlFor="speed">Speed</label>
+        </div>
 
-      <button onClick={() => setShowGrid(!showGrid)}>
-        {showGrid ? "hide grid" : "show grid"}
-      </button>
+        <button onClick={() => setShowGrid(!showGrid)}>
+          {showGrid ? "hide grid" : "show grid"}
+        </button>
 
-      <button onClick={() => setIsRunning(!isRunning)}>
-        {isRunning ? "pause" : "play"}
-      </button>
+        <button onClick={() => setIsRunning(!isRunning)}>
+          {isRunning ? "pause" : "play"}
+        </button>
 
-      <button
-        onClick={() => {
-          setIsRunning(false);
-          resetBoard();
-        }}
-      >
-        Reset board
-      </button>
-      <input
-        id="wrapWalls"
-        type="checkbox"
-        onChange={() => handleWrapChange()}
-      />
-      <label htmlFor="wrapWalls">Wrap walls</label>
+        <button
+          onClick={() => {
+            setIsRunning(false);
+            resetBoard();
+          }}
+        >
+          Reset board
+        </button>
+        <div>
+          <input
+            id="wrapWalls"
+            type="checkbox"
+            onChange={() => handleWrapChange()}
+          />
+          <label htmlFor="wrapWalls">Wrap walls</label>
+        </div>
+        <div>
+          <input
+            type="range"
+            id="gridSize"
+            min="10"
+            max="200"
+            onChange={(e) => {
+              handleGridSizeChange(e.target.value);
+            }}
+          />
+          <label htmlFor="gridSize">Grid size</label>
+        </div>
+      </div>
     </>
   );
 }
