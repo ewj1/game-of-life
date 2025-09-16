@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useImmer } from "use-immer";
 
 import { Board } from "./Board.jsx";
@@ -24,60 +24,62 @@ export function GameOfLife() {
   const [board, setBoard] = useImmer(() => createBoard(gridSize));
   const initBoardRef = useRef(board);
   const speedRef = useRef(null);
-  const updateBoardRef = useRef(null);
 
   useEffect(() => {
     speedRef.current = speed;
   }, [speed]);
 
-  useEffect(() => {
-    console.log(speed);
-    updateBoardRef.current = () =>
-      setBoard((draft) => {
-        for (let i = 0; i < gridSize; i++) {
-          for (let j = 0; j < gridSize; j++) {
-            const numNeighbors = neighborPositions.reduce((count, [dx, dy]) => {
-              let ni = i + dx;
-              let nj = j + dy;
-              if (wrapWalls) {
-                ni = wrap(ni, gridSize);
-                nj = wrap(nj, gridSize);
-              }
-              if (ni >= 0 && ni < gridSize && nj >= 0 && nj < gridSize) {
-                count += board[ni][nj];
-              }
-              return count;
-            }, 0);
-
-            if (board[i][j] === 1) {
-              if (numNeighbors > 3 || numNeighbors < 2) {
-                draft[i][j] = 0;
-              }
+  const updateBoard = useCallback(() => {
+    setBoard((draft) => {
+      const prevBoard = draft.map((row) => [...row]);
+      for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {
+          const numNeighbors = neighborPositions.reduce((count, [dx, dy]) => {
+            let ni = i + dx;
+            let nj = j + dy;
+            if (wrapWalls) {
+              ni = wrap(ni, gridSize);
+              nj = wrap(nj, gridSize);
             }
-            if (board[i][j] === 0) {
-              if (numNeighbors === 3) {
-                draft[i][j] = 1;
-              }
+            if (ni >= 0 && ni < gridSize && nj >= 0 && nj < gridSize) {
+              count += prevBoard[ni][nj];
+            }
+            return count;
+          }, 0);
+
+          if (prevBoard[i][j] === 1) {
+            if (numNeighbors > 3 || numNeighbors < 2) {
+              draft[i][j] = 0;
+            }
+          }
+          if (prevBoard[i][j] === 0) {
+            if (numNeighbors === 3) {
+              draft[i][j] = 1;
             }
           }
         }
-        return draft;
-      });
-  }, [setBoard, board, wrapWalls, gridSize]);
+      }
+      return draft;
+    });
+  }, [setBoard, wrapWalls, gridSize]);
 
   useEffect(() => {
     if (!isRunning) return;
     let timeoutId;
 
     const tick = () => {
-      updateBoardRef.current();
+      updateBoard();
       timeoutId = setTimeout(tick, speedRef.current);
     };
     tick();
     return () => clearTimeout(timeoutId);
-  }, [isRunning]);
+  }, [updateBoard, isRunning]);
 
-  function createBoard(gridSize) {
+  function createBoard(gridSize, { blank = false } = {}) {
+    if (blank)
+      return Array.from({ length: gridSize }, () =>
+        Array.from({ length: gridSize }, () => 0)
+      );
     return Array.from({ length: gridSize }, () =>
       Array.from({ length: gridSize }, () => Math.round(Math.random()))
     );
@@ -96,11 +98,11 @@ export function GameOfLife() {
   function handleSpeedChange(value) {
     const pct = Number(value) / 100; // 0 → 1
     const delay = MIN_DELAY + (MAX_DELAY - MIN_DELAY) * (1 - pct);
-    console.log("delay", delay);
     setSpeed(delay);
   }
 
-  const handleGridSizeChange = (size) => {
+  const handleGridSizeChange = (val) => {
+    const size = Number(val);
     setIsRunning(false);
     setGridSize(size);
     const newBoard = createBoard(size);
@@ -120,6 +122,7 @@ export function GameOfLife() {
           handleSpeedChange={handleSpeedChange}
           handleGridSizeChange={handleGridSizeChange}
           resetBoard={() => setBoard(initBoardRef.current)}
+          clearBoard={() => setBoard(createBoard(gridSize, { blank: true }))}
           handleWrapChange={handleWrapChange}
         />
       </div>

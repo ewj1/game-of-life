@@ -6,6 +6,7 @@ export function Controls({
   handleSpeedChange,
   handleGridSizeChange,
   resetBoard,
+  clearBoard,
   handleWrapChange,
 }) {
   return (
@@ -18,7 +19,6 @@ export function Controls({
             min="1"
             max="100"
             onChange={(e) => {
-              console.log("speed", e.target.value);
               handleSpeedChange(e.target.value);
             }}
             defaultValue="75"
@@ -41,6 +41,15 @@ export function Controls({
           }}
         >
           Reset board
+        </button>
+        <button
+          onClick={() => {
+            setIsRunning(false);
+            setShowGrid(true);
+            clearBoard();
+          }}
+        >
+          Clear board
         </button>
         <div>
           <input
