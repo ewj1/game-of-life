@@ -1,12 +1,5 @@
-# React + Vite
+# Game of Life
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Javascript React + HTML Canvas implementation of **Conway's Game of Life** that lets users play with random or custom setups and alter the grid size, speed of simulation, and whether to wrap walls.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Read more about the game of life [here](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
