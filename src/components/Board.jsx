@@ -1,9 +1,11 @@
 import { useRef, useEffect } from "react";
 
-export function Board({ board, showGrid }) {
+export function Board({ board, setBoard, showGrid }) {
   const gridSize = board.length;
-  const strokeWidth = 0.5;
+  const strokeWidth = 0.1;
   const canvasRef = useRef(null);
+  const isDrawingRef = useRef(false);
+  const drawValueRef = useRef(null);
 
   useEffect(() => {
     const resolution = 450 / gridSize;
@@ -36,6 +38,7 @@ export function Board({ board, showGrid }) {
             resolution + strokeWidth,
             resolution + strokeWidth
           );
+          ctx.lineWidth = strokeWidth;
           if (!showGrid) continue;
           ctx.strokeRect(
             resolution * i,
@@ -49,9 +52,53 @@ export function Board({ board, showGrid }) {
     draw();
   }, [gridSize, board, showGrid]);
 
+  const handleCellInteraction = (e) => {
+    const resolution = 450 / gridSize;
+    const x = Math.floor(e.nativeEvent.offsetX / resolution);
+    const y = Math.floor(e.nativeEvent.offsetY / resolution);
+
+    setBoard((draft) => {
+      if (drawValueRef.current === null) {
+        drawValueRef.current = !draft[x][y];
+      }
+      draft[x][y] = Number(drawValueRef.current);
+    });
+    console.log(`Set cell [${x}][${y}] to ${board[x][y]}`);
+    console.table(board);
+  };
+
+  const handleMouseDown = (e) => {
+    isDrawingRef.current = true;
+    drawValueRef.current = null;
+    handleCellInteraction(e);
+  };
+
+  const handleMouseMove = (e) => {
+    if (isDrawingRef.current) {
+      handleCellInteraction(e);
+    }
+  };
+
+  const handleMouseUp = () => {
+    isDrawingRef.current = false;
+    drawValueRef.current = null;
+  };
+
+  const handleMouseLeave = () => {
+    isDrawingRef.current = false;
+    drawValueRef.current = null;
+  };
+
   return (
     <>
-      <canvas ref={canvasRef} />
+      <canvas
+        className="cursor-crosshair"
+        ref={canvasRef}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      />
     </>
   );
 }
