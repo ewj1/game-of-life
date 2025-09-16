@@ -1,6 +1,12 @@
 import { useRef, useEffect } from "react";
 
-export function Board({ board, setBoard, showGrid }) {
+export function Board({
+  board,
+  setBoard,
+  showGrid,
+  initBoardRef,
+  setIsRunning,
+}) {
   const gridSize = board.length;
   const strokeWidth = 0.1;
   const canvasRef = useRef(null);
@@ -52,7 +58,13 @@ export function Board({ board, setBoard, showGrid }) {
     draw();
   }, [gridSize, board, showGrid]);
 
-  const handleCellInteraction = (e) => {
+  function updateInitBoardRef() {
+    initBoardRef.current = board.map((row) => [...row]);
+  }
+
+  function handleCellInteraction(e) {
+    setIsRunning(false);
+
     const resolution = 450 / gridSize;
     const x = Math.floor(e.nativeEvent.offsetX / resolution);
     const y = Math.floor(e.nativeEvent.offsetY / resolution);
@@ -63,30 +75,31 @@ export function Board({ board, setBoard, showGrid }) {
       }
       draft[x][y] = Number(drawValueRef.current);
     });
-  };
+  }
 
-  const handleMouseDown = (e) => {
+  function handleMouseDown(e) {
     isDrawingRef.current = true;
     drawValueRef.current = null;
     handleCellInteraction(e);
-  };
+  }
 
-  const handleMouseMove = (e) => {
+  function handleMouseMove(e) {
     if (isDrawingRef.current) {
       handleCellInteraction(e);
     }
-  };
+  }
 
-  const handleMouseUp = () => {
+  function handleMouseUp() {
     isDrawingRef.current = false;
     drawValueRef.current = null;
-  };
+    updateInitBoardRef();
+  }
 
-  const handleMouseLeave = () => {
+  function handleMouseLeave() {
     isDrawingRef.current = false;
     drawValueRef.current = null;
-  };
-
+    updateInitBoardRef();
+  }
   return (
     <>
       <canvas

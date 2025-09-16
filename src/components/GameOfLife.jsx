@@ -113,7 +113,13 @@ export function GameOfLife() {
   return (
     <>
       <div className="flex justify-center">
-        <Board board={board} setBoard={setBoard} showGrid={showGrid} />
+        <Board
+          board={board}
+          setBoard={setBoard}
+          showGrid={showGrid}
+          initBoardRef={initBoardRef}
+          setIsRunning={setIsRunning}
+        />
         <Controls
           isRunning={isRunning}
           setIsRunning={setIsRunning}
