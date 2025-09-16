@@ -63,8 +63,6 @@ export function Board({ board, setBoard, showGrid }) {
       }
       draft[x][y] = Number(drawValueRef.current);
     });
-    console.log(`Set cell [${x}][${y}] to ${board[x][y]}`);
-    console.table(board);
   };
 
   const handleMouseDown = (e) => {
