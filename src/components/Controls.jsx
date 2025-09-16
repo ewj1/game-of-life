@@ -5,6 +5,7 @@ export function Controls({
   setShowGrid,
   setSpeed,
   resetBoard,
+  handleWrapChange,
 }) {
   const MIN_DELAY = 30;
   const MAX_DELAY = 500;
@@ -40,6 +41,12 @@ export function Controls({
       >
         Reset board
       </button>
+      <input
+        id="wrapWalls"
+        type="checkbox"
+        onChange={() => handleWrapChange()}
+      />
+      <label htmlFor="wrapWalls">Wrap walls</label>
     </>
   );
 }

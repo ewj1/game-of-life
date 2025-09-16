@@ -19,6 +19,7 @@ export function GameOfLife() {
   const [isRunning, setIsRunning] = useState(true);
   const [showGrid, setShowGrid] = useState(false);
   const [speed, setSpeed] = useState(10);
+  const [wrapWalls, setWrapWalls] = useState(false);
 
   const numRows = 150;
   const numCols = 150;
@@ -34,19 +35,21 @@ export function GameOfLife() {
   useEffect(() => {
     updateBoardRef.current = () =>
       setBoard((draft) => {
-        for (let i = 0; i < numCols; i++) {
+        for (let i = 0; i < numRows; i++) {
           for (let j = 0; j < numCols; j++) {
-            let numNeighbors = 0;
-            for (const [x, y] of neighborPositions) {
-              if (
-                i + x > 0 &&
-                i + x < numCols &&
-                j + y > 0 &&
-                j + y < numRows
-              ) {
-                numNeighbors += board[i + x][j + y];
+            const numNeighbors = neighborPositions.reduce((count, [dx, dy]) => {
+              let ni = i + dx;
+              let nj = j + dy;
+              if (wrapWalls) {
+                ni = wrap(ni, numCols);
+                nj = wrap(nj, numRows);
               }
-            }
+              if (ni >= 0 && ni < numCols && nj >= 0 && nj < numRows) {
+                count += board[ni][nj];
+              }
+              return count;
+            }, 0);
+
             if (board[i][j] === 1) {
               if (numNeighbors > 3 || numNeighbors < 2) {
                 draft[i][j] = 0;
@@ -61,7 +64,7 @@ export function GameOfLife() {
         }
         return draft;
       });
-  }, [setBoard, board]);
+  }, [setBoard, board, wrapWalls]);
 
   useEffect(() => {
     if (!isRunning) return;
@@ -81,6 +84,14 @@ export function GameOfLife() {
     );
   }
 
+  function wrap(val, max) {
+    return (val + max) % max;
+  }
+
+  function handleWrapChange() {
+    setWrapWalls(!wrapWalls);
+  }
+
   return (
     <>
       <div className="flex justify-center">
@@ -92,6 +103,7 @@ export function GameOfLife() {
           setShowGrid={setShowGrid}
           setSpeed={setSpeed}
           resetBoard={() => setBoard(initBoardRef.current)}
+          handleWrapChange={handleWrapChange}
         />
       </div>
     </>
