@@ -89,10 +89,6 @@ export function GameOfLife() {
     return (val + max) % max;
   }
 
-  function handleWrapChange() {
-    setWrapWalls(!wrapWalls);
-  }
-
   const MIN_DELAY = 30;
   const MAX_DELAY = 500;
   function handleSpeedChange(value) {
@@ -129,7 +125,8 @@ export function GameOfLife() {
           handleGridSizeChange={handleGridSizeChange}
           resetBoard={() => setBoard(initBoardRef.current)}
           clearBoard={() => setBoard(createBoard(gridSize, { blank: true }))}
-          handleWrapChange={handleWrapChange}
+          wrapWalls={wrapWalls}
+          setWrapWalls={setWrapWalls}
         />
       </div>
     </>
