@@ -1,0 +1,26 @@
+  
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Game of Life Glider Pattern with dark mode support -->
+  <!-- CSS for dark mode detection -->
+  <style>
+    .glider-cell { fill: #000000; }
+    .grid-line { stroke: #cccccc; }
+    
+    @media (prefers-color-scheme: dark) {
+      .glider-cell { fill: #ffffff; }
+      .grid-line { stroke: #444444; }
+    }
+  </style>
+
+  <!-- Glider pattern - 5 squares in glider formation -->
+  <!-- Top row: one cell -->
+  <rect x="16" y="8" width="8" height="8" class="glider-cell"/>
+  
+  <!-- Middle row: one cell on right -->  
+  <rect x="24" y="16" width="8" height="8" class="glider-cell"/>
+  
+  <!-- Bottom row: three cells -->
+  <rect x="8" y="24" width="8" height="8" class="glider-cell"/>
+  <rect x="16" y="24" width="8" height="8" class="glider-cell"/>
+  <rect x="24" y="24" width="8" height="8" class="glider-cell"/>
+</svg>
