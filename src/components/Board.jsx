@@ -13,14 +13,14 @@ export function Board({
   const containerRef = useRef(null);
   const isDrawingRef = useRef(false);
   const drawValueRef = useRef(null);
-  let resolution;
+  const resolutionRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
     if (!canvas || !container) return;
     const size = Math.min(container.clientWidth, window.innerHeight * 0.8);
-    resolution = size / gridSize;
+    resolutionRef.currentRef.current = size / gridSize;
 
     //CANVAS SIZING
     const dpr = window.devicePixelRatio || 1;
@@ -46,18 +46,18 @@ export function Board({
           ctx.fillStyle = board[i][j] ? "black" : "white";
 
           ctx.fillRect(
-            resolution * i,
-            resolution * j,
-            resolution + strokeWidth,
-            resolution + strokeWidth
+            resolutionRef.current * i,
+            resolutionRef.current * j,
+            resolutionRef.current + strokeWidth,
+            resolutionRef.current + strokeWidth
           );
           ctx.lineWidth = strokeWidth;
           if (!showGrid) continue;
           ctx.strokeRect(
-            resolution * i,
-            resolution * j,
-            resolution,
-            resolution
+            resolutionRef.current * i,
+            resolutionRef.current * j,
+            resolutionRef.current,
+            resolutionRef.current
           );
         }
       }
@@ -80,8 +80,8 @@ export function Board({
 
   function getClickPos(e) {
     setIsRunning(false);
-    const x = Math.floor(e.nativeEvent.offsetX / resolution);
-    const y = Math.floor(e.nativeEvent.offsetY / resolution);
+    const x = Math.floor(e.nativeEvent.offsetX / resolutionRef);
+    const y = Math.floor(e.nativeEvent.offsetY / resolutionRef);
     return { x, y };
   }
 
