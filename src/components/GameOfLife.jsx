@@ -89,7 +89,7 @@ export function GameOfLife() {
     return (val + max) % max;
   }
 
-  const MIN_DELAY = 30;
+  const MIN_DELAY = 5;
   const MAX_DELAY = 500;
   function handleSpeedChange(value) {
     const pct = Number(value) / 100; // 0 → 1
