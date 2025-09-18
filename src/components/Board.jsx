@@ -69,13 +69,6 @@ export function Board({
     initBoardRef.current = board.map((row) => [...row]);
   }
 
-  function getClickPos(e) {
-    setIsRunning(false);
-    const x = Math.floor(e.nativeEvent.offsetX / resolution);
-    const y = Math.floor(e.nativeEvent.offsetY / resolution);
-    return { x, y };
-  }
-
   function toggleCell(x, y) {
     setBoard((draft) => {
       if (drawValueRef.current === null) {
@@ -83,6 +76,13 @@ export function Board({
       }
       draft[x][y] = Number(drawValueRef.current);
     });
+  }
+
+  function getClickPos(e) {
+    setIsRunning(false);
+    const x = Math.floor(e.nativeEvent.offsetX / resolution);
+    const y = Math.floor(e.nativeEvent.offsetY / resolution);
+    return { x, y };
   }
 
   function handleMouseDown(e) {
@@ -111,45 +111,48 @@ export function Board({
     updateInitBoardRef();
   }
 
-  // function getTouchPos(touch) {
-  //   const canvas = canvasRef.current;
-  //   const rect = canvas.getBoundingClientRect();
-  //   const x = Math.floor(((touch.clientX - rect.left) / rect.width) * gridSize);
-  //   const y = Math.floor(((touch.clientY - rect.top) / rect.height) * gridSize);
-  //   return { x, y };
-  // }
+  function getTouchPos(touch) {
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const x = Math.floor(((touch.clientX - rect.left) / rect.width) * gridSize);
+    const y = Math.floor(((touch.clientY - rect.top) / rect.height) * gridSize);
+    return { x, y };
+  }
 
-  // function handleTouchStart(e) {
-  //   e.preventDefault();
-  //   isDrawingRef.current = true;
-  //   drawValueRef.current = null;
-  //   const { x, y } = getTouchPos(e.touches[0]);
-  //   toggleCell(x, y);
-  // }
+  function handleTouchStart(e) {
+    e.preventDefault();
+    isDrawingRef.current = true;
+    drawValueRef.current = null;
+    const { x, y } = getTouchPos(e.touches[0]);
+    toggleCell(x, y);
+  }
 
-  // function handleTouchMove(e) {
-  //   e.preventDefault();
-  //   if (!isDrawingRef.current) return;
-  //   const { x, y } = getTouchPos(e.touches[0]);
-  //   toggleCell(x, y);
-  // }
+  function handleTouchMove(e) {
+    e.preventDefault();
+    if (!isDrawingRef.current) return;
+    const { x, y } = getTouchPos(e.touches[0]);
+    toggleCell(x, y);
+  }
 
-  // function handleTouchEnd() {
-  //   isDrawingRef.current = false;
-  //   drawValueRef.current = null;
-  //   updateInitBoardRef();
-  // }
+  function handleTouchEnd() {
+    isDrawingRef.current = false;
+    drawValueRef.current = null;
+    updateInitBoardRef();
+  }
 
   return (
     <>
       <div ref={containerRef}>
         <canvas
-          className="cursor-crosshair"
+          className="cursor-crosshair touch-none"
           ref={canvasRef}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         />
       </div>
     </>
