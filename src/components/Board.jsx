@@ -20,7 +20,7 @@ export function Board({
     const container = containerRef.current;
     if (!canvas || !container) return;
     const size = Math.min(container.clientWidth, window.innerHeight * 0.8);
-    resolutionRef.currentRef.current = size / gridSize;
+    resolutionRef.current = size / gridSize;
 
     //CANVAS SIZING
     const dpr = window.devicePixelRatio || 1;
@@ -80,8 +80,8 @@ export function Board({
 
   function getClickPos(e) {
     setIsRunning(false);
-    const x = Math.floor(e.nativeEvent.offsetX / resolutionRef);
-    const y = Math.floor(e.nativeEvent.offsetY / resolutionRef);
+    const x = Math.floor(e.nativeEvent.offsetX / resolutionRef.current);
+    const y = Math.floor(e.nativeEvent.offsetY / resolutionRef.current);
     return { x, y };
   }
 

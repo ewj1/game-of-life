@@ -110,6 +110,7 @@ export function GameOfLife() {
     <>
       <div className="flex flex-col md:flex-row justify-center items-start gap-4">
         <Board
+          className="w-full max-w-screen-sm"
           board={board}
           setBoard={setBoard}
           showGrid={showGrid}
@@ -117,6 +118,7 @@ export function GameOfLife() {
           setIsRunning={setIsRunning}
         />
         <Controls
+          className="w-full max-w-screen-sm"
           isRunning={isRunning}
           setIsRunning={setIsRunning}
           showGrid={showGrid}
@@ -127,7 +129,6 @@ export function GameOfLife() {
           clearBoard={() => setBoard(createBoard(gridSize, { blank: true }))}
           wrapWalls={wrapWalls}
           setWrapWalls={setWrapWalls}
-          className="w-full max-w-screen-sm"
         />
       </div>
     </>
