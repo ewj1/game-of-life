@@ -108,7 +108,7 @@ export function GameOfLife() {
 
   return (
     <>
-      <div className="flex justify-center">
+      <div className="flex flex-col md:flex-row justify-center items-start gap-4">
         <Board
           board={board}
           setBoard={setBoard}
@@ -127,6 +127,7 @@ export function GameOfLife() {
           clearBoard={() => setBoard(createBoard(gridSize, { blank: true }))}
           wrapWalls={wrapWalls}
           setWrapWalls={setWrapWalls}
+          className="w-full max-w-screen-sm"
         />
       </div>
     </>
