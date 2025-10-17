@@ -1,12 +1,6 @@
 import { useRef, useEffect } from "react";
 
-export function Board({
-  board,
-  setBoard,
-  showGrid,
-  initBoardRef,
-  setIsRunning,
-}) {
+export function Board({ board, showGrid, dispatch }) {
   const gridSize = board.length;
   const strokeWidth = 0.1;
   const canvasRef = useRef(null);
@@ -65,21 +59,19 @@ export function Board({
     draw();
   }, [gridSize, board, showGrid]);
 
-  function updateInitBoardRef() {
-    initBoardRef.current = board.map((row) => [...row]);
-  }
-
   function toggleCell(x, y) {
-    setBoard((draft) => {
-      if (drawValueRef.current === null) {
-        drawValueRef.current = !draft[x][y];
-      }
-      draft[x][y] = Number(drawValueRef.current);
+    if (drawValueRef.current === null) {
+      drawValueRef.current = !board[x][y];
+    }
+    dispatch({
+      type: "toggle_cell",
+      pos: { x, y },
+      value: Number(drawValueRef.current),
     });
   }
 
   function getClickPos(e) {
-    setIsRunning(false);
+    dispatch({ type: "toggle_running", value: false });
     const x = Math.floor(e.nativeEvent.offsetX / resolutionRef.current);
     const y = Math.floor(e.nativeEvent.offsetY / resolutionRef.current);
     return { x, y };
@@ -102,16 +94,16 @@ export function Board({
   function handleMouseUp() {
     isDrawingRef.current = false;
     drawValueRef.current = null;
-    updateInitBoardRef();
   }
 
   function handleMouseLeave() {
     isDrawingRef.current = false;
     drawValueRef.current = null;
-    updateInitBoardRef();
+    dispatch({ type: "user_finished_editing" });
   }
 
   function getTouchPos(touch) {
+    dispatch({ type: "toggle_running", value: false });
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
     const x = Math.floor(((touch.clientX - rect.left) / rect.width) * gridSize);
@@ -120,7 +112,6 @@ export function Board({
   }
 
   function handleTouchStart(e) {
-    e.preventDefault();
     isDrawingRef.current = true;
     drawValueRef.current = null;
     const { x, y } = getTouchPos(e.touches[0]);
@@ -128,7 +119,6 @@ export function Board({
   }
 
   function handleTouchMove(e) {
-    e.preventDefault();
     if (!isDrawingRef.current) return;
     const { x, y } = getTouchPos(e.touches[0]);
     toggleCell(x, y);
@@ -137,7 +127,7 @@ export function Board({
   function handleTouchEnd() {
     isDrawingRef.current = false;
     drawValueRef.current = null;
-    updateInitBoardRef();
+    dispatch({ type: "user_finished_editing" });
   }
 
   return (
