@@ -112,7 +112,6 @@ export function Board({ board, showGrid, dispatch }) {
   }
 
   function handleTouchStart(e) {
-    e.preventDefault();
     isDrawingRef.current = true;
     drawValueRef.current = null;
     const { x, y } = getTouchPos(e.touches[0]);
@@ -120,7 +119,6 @@ export function Board({ board, showGrid, dispatch }) {
   }
 
   function handleTouchMove(e) {
-    e.preventDefault();
     if (!isDrawingRef.current) return;
     const { x, y } = getTouchPos(e.touches[0]);
     toggleCell(x, y);
